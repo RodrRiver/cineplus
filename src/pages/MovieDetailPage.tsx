@@ -145,12 +145,14 @@ export default function MovieDetailPage() {
               ))}
             </div>
 
-            <div className="flex items-center gap-3 mb-4">
-              <StarRating rating={movie.vote_average} />
-              <span className="text-text-muted text-sm">
-                ({movie.vote_count.toLocaleString()} votos)
-              </span>
-            </div>
+            {isNowPlaying && (
+              <div className="flex items-center gap-3 mb-4">
+                <StarRating rating={movie.vote_average} />
+                <span className="text-text-muted text-sm">
+                  ({movie.vote_count.toLocaleString()} votos)
+                </span>
+              </div>
+            )}
 
             {movie.tagline && (
               <p className="italic text-gold-400 mb-4">{movie.tagline}</p>

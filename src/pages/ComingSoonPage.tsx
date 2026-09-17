@@ -69,7 +69,7 @@ export default function ComingSoonPage() {
         />
 
         <div className="mt-6">
-          <MovieGrid movies={filteredMovies} loading={loading} />
+          <MovieGrid movies={filteredMovies} loading={loading} showRating={false} />
           {!loading && filteredMovies.length === 0 && (
             <p className="text-center text-text-muted py-12">
               No se encontraron películas

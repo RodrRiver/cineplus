@@ -5,9 +5,10 @@ import type { TMDBMovie } from '../../types/tmdb';
 interface MovieCardProps {
   movie: TMDBMovie;
   className?: string;
+  showRating?: boolean;
 }
 
-export default function MovieCard({ movie, className = '' }: MovieCardProps) {
+export default function MovieCard({ movie, className = '', showRating = true }: MovieCardProps) {
   return (
     <Link
       to={`/movie/${movie.id}`}
@@ -20,9 +21,11 @@ export default function MovieCard({ movie, className = '' }: MovieCardProps) {
           className="w-full h-full object-cover"
           loading="lazy"
         />
-        <div className="absolute top-2 right-2 bg-gold-400 text-surface-900 text-xs font-bold px-2 py-1 rounded-full">
-          {movie.vote_average.toFixed(1)}
-        </div>
+        {showRating && (
+          <div className="absolute top-2 right-2 bg-gold-400 text-surface-900 text-xs font-bold px-2 py-1 rounded-full">
+            {movie.vote_average.toFixed(1)}
+          </div>
+        )}
       </div>
       <h3 className="mt-2 text-text-primary font-medium text-sm line-clamp-1">
         {movie.title}
