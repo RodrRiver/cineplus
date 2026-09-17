@@ -4,7 +4,7 @@ import { Film, Globe, Mail, MessageCircle } from 'lucide-react';
 const quickLinks = [
   { to: '/movies', label: 'Cartelera' },
   { to: '/coming-soon', label: 'Próximamente' },
-  { to: '/', label: 'Sucursales' },
+  { to: '/locations', label: 'Sucursales' },
 ];
 
 const socialLinks = [

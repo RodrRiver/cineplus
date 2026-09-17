@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { useMovies } from '../../hooks/useMovies';
@@ -5,7 +6,9 @@ import MovieCard from '../movies/MovieCard';
 import Skeleton from '../ui/Skeleton';
 
 export default function UpcomingSection() {
-  const { movies, loading } = useMovies('upcoming');
+  const { movies: raw, loading } = useMovies('upcoming');
+  const today = new Date().toISOString().split('T')[0];
+  const movies = useMemo(() => raw.filter((m) => m.release_date > today), [raw, today]);
 
   return (
     <section>

@@ -8,7 +8,13 @@ import { searchMovies } from '../api/tmdb';
 import type { TMDBMovie } from '../types/tmdb';
 
 export default function ComingSoonPage() {
-  const { movies: upcoming, loading: loadingMovies } = useMovies('upcoming');
+  const { movies: upcomingRaw, loading: loadingMovies } = useMovies('upcoming');
+
+  const today = new Date().toISOString().split('T')[0];
+  const upcoming = useMemo(
+    () => upcomingRaw.filter((m) => m.release_date > today),
+    [upcomingRaw, today]
+  );
   const { genres } = useGenres();
 
   const [searchQuery, setSearchQuery] = useState('');
