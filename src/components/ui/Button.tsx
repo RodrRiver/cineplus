@@ -25,7 +25,7 @@ export type ButtonProps = AsButton | AsLink;
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    'bg-gold-400 text-surface-900 hover:bg-gold-500 active:bg-gold-600 disabled:bg-gold-400/40 disabled:cursor-not-allowed font-semibold',
+    'bg-gold-400 text-surface-900 hover:bg-gold-300 active:bg-gold-200 disabled:bg-gold-400/40 disabled:cursor-not-allowed font-semibold',
   secondary:
     'border-2 border-gold-400 text-gold-400 hover:bg-gold-400/10 active:bg-gold-400/20 disabled:border-gold-400/40 disabled:text-gold-400/40 disabled:cursor-not-allowed',
   ghost:

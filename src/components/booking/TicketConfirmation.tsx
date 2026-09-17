@@ -38,7 +38,7 @@ export default function TicketConfirmation() {
         <div
           className="absolute top-0 left-0 right-0 h-4 z-10"
           style={{
-            background: 'radial-gradient(circle 8px at 16px 0, transparent 8px, #FFFBEB 8px)',
+            background: 'radial-gradient(circle 8px at 16px 0, transparent 8px, #F8F9FA 8px)',
             backgroundSize: '32px 16px',
           }}
         />
@@ -47,13 +47,13 @@ export default function TicketConfirmation() {
           <div className="px-6 pt-4 text-center">
             <h3
               className="font-heading text-2xl font-bold tracking-wide"
-              style={{ color: '#B8860B' }}
+              style={{ color: '#6B7280' }}
             >
               CinePlus
             </h3>
             <div
               className="w-16 h-0.5 mx-auto mt-1 rounded-full"
-              style={{ background: 'linear-gradient(90deg, transparent, #B8860B, transparent)' }}
+              style={{ background: 'linear-gradient(90deg, transparent, #9CA3AF, transparent)' }}
             />
           </div>
 
@@ -186,7 +186,7 @@ export default function TicketConfirmation() {
         <div
           className="absolute bottom-0 left-0 right-0 h-4 z-10"
           style={{
-            background: 'radial-gradient(circle 8px at 16px 16px, transparent 8px, #FFFBEB 8px)',
+            background: 'radial-gradient(circle 8px at 16px 16px, transparent 8px, #F8F9FA 8px)',
             backgroundSize: '32px 16px',
           }}
         />

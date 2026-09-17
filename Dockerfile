@@ -3,8 +3,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
-ARG VITE_TMDB_API_KEY
-ENV VITE_TMDB_API_KEY=$VITE_TMDB_API_KEY
+COPY .env .env
 RUN npm run build
 
 FROM nginx:alpine

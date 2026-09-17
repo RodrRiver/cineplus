@@ -4,13 +4,13 @@
   --font-heading: "Poppins", sans-serif;
   --font-body: "Inter", sans-serif;
 
-  --color-gold-50: #FFF9E6;
-  --color-gold-100: #FFF0BF;
-  --color-gold-200: #FFE080;
-  --color-gold-300: #FFD040;
-  --color-gold-400: #FFC107;
-  --color-gold-500: #E5A800;
-  --color-gold-600: #CC9600;
+  --color-gold-50: #F8F9FA;
+  --color-gold-100: #E8EAED;
+  --color-gold-200: #D1D5DB;
+  --color-gold-300: #BCC1C9;
+  --color-gold-400: #C0C6CF;
+  --color-gold-500: #A8B0BA;
+  --color-gold-600: #8A929C;
 
   --color-surface-900: #0A0A0A;
   --color-surface-800: #121212;
@@ -49,7 +49,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gold-500);
+  background: var(--color-gold-400);
 }
 
 @keyframes fadeIn {
@@ -75,14 +75,14 @@ body {
 }
 
 .hero-swiper .swiper-pagination-bullet-active {
-  background: var(--color-gold-400);
+  background: #C0C6CF;
   width: 28px;
   border-radius: 5px;
 }
 
 .swiper-button-next,
 .swiper-button-prev {
-  color: var(--color-gold-400) !important;
+  color: #C0C6CF !important;
 }
 
 .swiper-button-next::after,
