@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Download, Home } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -9,6 +9,27 @@ import Badge from '../ui/Badge';
 import { useBookingStore } from '../../stores/bookingStore';
 import { SNACKS } from '../../data/snacks';
 import { posterUrl } from '../../api/tmdb';
+
+function useImageDataUrl(src: string | null): string | null {
+  const [dataUrl, setDataUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!src) return;
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      canvas.getContext('2d')!.drawImage(img, 0, 0);
+      setDataUrl(canvas.toDataURL('image/png'));
+    };
+    img.onerror = () => setDataUrl(null);
+    img.src = src;
+  }, [src]);
+
+  return dataUrl;
+}
 
 export default function TicketConfirmation() {
   const ticketRef = useRef<HTMLDivElement>(null);
@@ -21,6 +42,10 @@ export default function TicketConfirmation() {
   const total = useBookingStore((s) => s.total);
   const reset = useBookingStore((s) => s.reset);
   const navigate = useNavigate();
+
+  const posterDataUrl = useImageDataUrl(
+    movie?.poster_path ? posterUrl(movie.poster_path, 'w154') : null
+  );
 
   const snackEntries = Object.entries(snacks)
     .map(([id, qty]) => {
@@ -41,34 +66,32 @@ export default function TicketConfirmation() {
         <div
           className="absolute top-0 left-0 right-0 h-4 z-10"
           style={{
-            background: 'radial-gradient(circle 8px at 16px 0, transparent 8px, #F8F9FA 8px)',
+            background: 'radial-gradient(circle 8px at 16px 0, transparent 8px, #1A1A1A 8px)',
             backgroundSize: '32px 16px',
           }}
         />
 
-        <div className="bg-gold-50 rounded-2xl overflow-hidden shadow-2xl shadow-gold-400/10 pt-6 pb-6">
+        <div className="rounded-2xl overflow-hidden shadow-2xl shadow-black/40 pt-6 pb-6" style={{ background: 'linear-gradient(180deg, #1E1E1E 0%, #141414 100%)' }}>
           <div className="px-6 pt-4 text-center">
-            <h3
-              className="font-heading text-2xl font-bold tracking-wide"
-              style={{ color: '#6B7280' }}
-            >
+            <h3 className="font-heading text-2xl font-bold tracking-wide text-gold-400">
               CinePlus
             </h3>
             <div
               className="w-16 h-0.5 mx-auto mt-1 rounded-full"
-              style={{ background: 'linear-gradient(90deg, transparent, #9CA3AF, transparent)' }}
+              style={{ background: 'linear-gradient(90deg, transparent, #C0C6CF, transparent)' }}
             />
           </div>
 
           {movie && (
             <div className="px-6 mt-5 flex gap-4">
               <img
-                src={posterUrl(movie.poster_path, 'w154')}
+                src={posterDataUrl || posterUrl(movie.poster_path, 'w154')}
                 alt={movie.title}
                 className="w-20 h-28 object-cover rounded-lg shadow-md shrink-0"
+                crossOrigin="anonymous"
               />
               <div className="flex flex-col justify-center">
-                <h4 className="font-heading text-lg font-bold text-surface-900 leading-tight">
+                <h4 className="font-heading text-lg font-bold text-text-primary leading-tight">
                   {movie.title}
                 </h4>
                 {showtime && (
@@ -83,10 +106,10 @@ export default function TicketConfirmation() {
           <div className="px-6 mt-5 grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
             {location && (
               <div>
-                <p className="text-surface-900/50 text-xs uppercase tracking-wider font-medium">
+                <p className="text-text-muted text-xs uppercase tracking-wider font-medium">
                   Cine
                 </p>
-                <p className="text-surface-900 font-semibold mt-0.5">
+                <p className="text-text-primary font-semibold mt-0.5">
                   {location.name}
                 </p>
               </div>
@@ -95,26 +118,26 @@ export default function TicketConfirmation() {
             {showtime && (
               <>
                 <div>
-                  <p className="text-surface-900/50 text-xs uppercase tracking-wider font-medium">
+                  <p className="text-text-muted text-xs uppercase tracking-wider font-medium">
                     Fecha
                   </p>
-                  <p className="text-surface-900 font-semibold mt-0.5">
+                  <p className="text-text-primary font-semibold mt-0.5">
                     {showtime.date}
                   </p>
                 </div>
                 <div>
-                  <p className="text-surface-900/50 text-xs uppercase tracking-wider font-medium">
+                  <p className="text-text-muted text-xs uppercase tracking-wider font-medium">
                     Hora
                   </p>
-                  <p className="text-surface-900 font-semibold mt-0.5">
+                  <p className="text-text-primary font-semibold mt-0.5">
                     {showtime.time}
                   </p>
                 </div>
                 <div>
-                  <p className="text-surface-900/50 text-xs uppercase tracking-wider font-medium">
+                  <p className="text-text-muted text-xs uppercase tracking-wider font-medium">
                     Sala
                   </p>
-                  <p className="text-surface-900 font-semibold mt-0.5">
+                  <p className="text-text-primary font-semibold mt-0.5">
                     Sala {showtime.screen}
                   </p>
                 </div>
@@ -123,10 +146,10 @@ export default function TicketConfirmation() {
 
             {selectedSeats.length > 0 && (
               <div className="col-span-2">
-                <p className="text-surface-900/50 text-xs uppercase tracking-wider font-medium">
+                <p className="text-text-muted text-xs uppercase tracking-wider font-medium">
                   Asientos
                 </p>
-                <p className="text-surface-900 font-semibold mt-0.5">
+                <p className="text-text-primary font-semibold mt-0.5">
                   {selectedSeats
                     .sort((a, b) => a.id.localeCompare(b.id))
                     .map((s) => `${s.row}-${s.number}`)
@@ -138,37 +161,37 @@ export default function TicketConfirmation() {
 
           {snackEntries.length > 0 && (
             <div className="px-6 mt-4">
-              <p className="text-surface-900/50 text-xs uppercase tracking-wider font-medium mb-1">
+              <p className="text-text-muted text-xs uppercase tracking-wider font-medium mb-1">
                 Snacks
               </p>
               {snackEntries.map((entry) => (
-                <p key={entry.name} className="text-surface-900 text-sm">
+                <p key={entry.name} className="text-text-primary text-sm">
                   {entry.qty}x {entry.name}
                 </p>
               ))}
             </div>
           )}
 
-          <div className="mx-6 my-5 border-t border-dashed border-surface-900/20" />
+          <div className="mx-6 my-5 border-t border-dashed border-surface-500" />
 
           <div className="px-6 flex items-center justify-between">
             <div>
-              <p className="text-surface-900/50 text-xs uppercase tracking-wider font-medium">
+              <p className="text-text-muted text-xs uppercase tracking-wider font-medium">
                 Total pagado
               </p>
-              <p className="text-surface-900 text-xl font-bold font-heading mt-0.5">
+              <p className="text-gold-400 text-xl font-bold font-heading mt-0.5">
                 ${total().toFixed(2)}
               </p>
             </div>
 
             {confirmationCode && (
-              <div className="bg-white p-2 rounded-lg shadow-sm">
+              <div className="bg-surface-600 p-2 rounded-lg">
                 <QRCodeSVG
                   value={confirmationCode}
                   size={80}
                   level="M"
-                  bgColor="#FFFFFF"
-                  fgColor="#0A0A0A"
+                  bgColor="#242424"
+                  fgColor="#C0C6CF"
                 />
               </div>
             )}
@@ -176,10 +199,10 @@ export default function TicketConfirmation() {
 
           {confirmationCode && (
             <div className="px-6 mt-4 text-center">
-              <p className="text-surface-900/50 text-xs uppercase tracking-wider font-medium">
+              <p className="text-text-muted text-xs uppercase tracking-wider font-medium">
                 Código de confirmación
               </p>
-              <p className="text-surface-900 text-2xl font-bold font-mono tracking-[0.2em] mt-1">
+              <p className="text-gold-400 text-2xl font-bold font-mono tracking-[0.2em] mt-1">
                 {confirmationCode}
               </p>
             </div>
@@ -189,7 +212,7 @@ export default function TicketConfirmation() {
         <div
           className="absolute bottom-0 left-0 right-0 h-4 z-10"
           style={{
-            background: 'radial-gradient(circle 8px at 16px 16px, transparent 8px, #F8F9FA 8px)',
+            background: 'radial-gradient(circle 8px at 16px 16px, transparent 8px, #1A1A1A 8px)',
             backgroundSize: '32px 16px',
           }}
         />
@@ -205,6 +228,7 @@ export default function TicketConfirmation() {
                 backgroundColor: '#0A0A0A',
                 scale: 2,
                 useCORS: true,
+                allowTaint: true,
               });
               const link = document.createElement('a');
               link.download = `CinePlus-${confirmationCode || 'ticket'}.png`;
