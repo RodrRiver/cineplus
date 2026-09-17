@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Play, Calendar, Clock, MapPin } from 'lucide-react';
+import { Play, Calendar, Clock, MapPin, CalendarClock } from 'lucide-react';
 import { useMovieDetail } from '../hooks/useMovieDetail';
+import { useMovies } from '../hooks/useMovies';
 import { posterUrl, backdropUrl, profileUrl } from '../api/tmdb';
 import { LOCATIONS } from '../data/locations';
 import { generateShowtimes } from '../data/showtimes';
@@ -30,6 +31,12 @@ export default function MovieDetailPage() {
   const { id } = useParams();
   const movieId = Number(id);
   const { movie, loading, error } = useMovieDetail(movieId);
+  const { movies: nowPlaying } = useMovies('now_playing');
+
+  const isNowPlaying = useMemo(
+    () => nowPlaying.some((m) => m.id === movieId),
+    [nowPlaying, movieId]
+  );
 
   const [trailerOpen, setTrailerOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(LOCATIONS[0].id);
@@ -153,20 +160,27 @@ export default function MovieDetailPage() {
               {movie.overview || 'Sin sinopsis disponible.'}
             </p>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               {trailerKey && (
                 <Button onClick={() => setTrailerOpen(true)}>
                   <Play size={18} className="mr-2" />
                   Ver Trailer
                 </Button>
               )}
-              <Button
-                as={Link}
-                to={`/movie/${movie.id}/book`}
-                variant="secondary"
-              >
-                Comprar Boletos
-              </Button>
+              {isNowPlaying ? (
+                <Button
+                  as={Link}
+                  to={`/movie/${movie.id}/book`}
+                  variant="secondary"
+                >
+                  Comprar Boletos
+                </Button>
+              ) : (
+                <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-600 text-text-muted">
+                  <CalendarClock size={18} />
+                  <span className="font-medium">Próximamente en cartelera</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -197,67 +211,69 @@ export default function MovieDetailPage() {
           </div>
         </section>
 
-        <section className="mt-12">
-          <h2 className="font-heading text-2xl font-semibold text-text-primary mb-6">
-            Horarios
-          </h2>
+        {isNowPlaying && (
+          <section className="mt-12">
+            <h2 className="font-heading text-2xl font-semibold text-text-primary mb-6">
+              Horarios
+            </h2>
 
-          <div className="flex gap-2 overflow-x-auto pb-4 mb-6 scrollbar-hide">
-            {LOCATIONS.map((loc) => (
-              <button
-                key={loc.id}
-                onClick={() => setSelectedLocation(loc.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all ${
-                  selectedLocation === loc.id
-                    ? 'bg-gold-400 text-surface-900 font-semibold'
-                    : 'bg-surface-700 text-text-secondary hover:bg-surface-600'
-                }`}
-              >
-                <MapPin size={14} />
-                {loc.name}
-              </button>
-            ))}
-          </div>
-
-          {showtimes.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {showtimes.map((st) => (
-                <Link
-                  key={st.id}
-                  to={`/movie/${movie.id}/book`}
-                  className="flex items-center justify-between bg-surface-800 border border-surface-600 rounded-xl p-4 hover:border-gold-400/50 transition-all group"
+            <div className="flex gap-2 overflow-x-auto pb-4 mb-6 scrollbar-hide">
+              {LOCATIONS.map((loc) => (
+                <button
+                  key={loc.id}
+                  onClick={() => setSelectedLocation(loc.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all ${
+                    selectedLocation === loc.id
+                      ? 'bg-gold-400 text-surface-900 font-semibold'
+                      : 'bg-surface-700 text-text-secondary hover:bg-surface-600'
+                  }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-text-primary font-heading text-lg font-semibold group-hover:text-gold-400 transition-colors">
-                      {st.time}
-                    </span>
-                    <Badge
-                      variant={
-                        st.format === 'VIP'
-                          ? 'purple'
-                          : st.format === 'IMAX'
-                          ? 'blue'
-                          : 'default'
-                      }
-                    >
-                      {st.format}
-                    </Badge>
-                    <span className="text-text-muted text-xs">
-                      {st.language}
-                    </span>
-                  </div>
-                  <span className="text-gold-400 font-semibold">
-                    ${st.price.toFixed(2)}
-                  </span>
-                </Link>
+                  <MapPin size={14} />
+                  {loc.name}
+                </button>
               ))}
             </div>
-          ) : (
-            <p className="text-text-muted text-center py-8">
-              No hay horarios disponibles para esta ubicación
-            </p>
-          )}
-        </section>
+
+            {showtimes.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {showtimes.map((st) => (
+                  <Link
+                    key={st.id}
+                    to={`/movie/${movie.id}/book`}
+                    className="flex items-center justify-between bg-surface-800 border border-surface-600 rounded-xl p-4 hover:border-gold-400/50 transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-text-primary font-heading text-lg font-semibold group-hover:text-gold-400 transition-colors">
+                        {st.time}
+                      </span>
+                      <Badge
+                        variant={
+                          st.format === 'VIP'
+                            ? 'purple'
+                            : st.format === 'IMAX'
+                            ? 'blue'
+                            : 'default'
+                        }
+                      >
+                        {st.format}
+                      </Badge>
+                      <span className="text-text-muted text-xs">
+                        {st.language}
+                      </span>
+                    </div>
+                    <span className="text-gold-400 font-semibold">
+                      ${st.price.toFixed(2)}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p className="text-text-muted text-center py-8">
+                No hay horarios disponibles para esta ubicación
+              </p>
+            )}
+          </section>
+        )}
       </Container>
 
       <TrailerModal
