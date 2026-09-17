@@ -1,7 +1,9 @@
+import { useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Download, Home } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import html2canvas from 'html2canvas-pro';
 import Button from '../ui/Button';
 import Badge from '../ui/Badge';
 import { useBookingStore } from '../../stores/bookingStore';
@@ -9,6 +11,7 @@ import { SNACKS } from '../../data/snacks';
 import { posterUrl } from '../../api/tmdb';
 
 export default function TicketConfirmation() {
+  const ticketRef = useRef<HTMLDivElement>(null);
   const movie = useBookingStore((s) => s.movie);
   const location = useBookingStore((s) => s.location);
   const showtime = useBookingStore((s) => s.showtime);
@@ -34,7 +37,7 @@ export default function TicketConfirmation() {
 
   return (
     <div className="max-w-md mx-auto">
-      <div className="relative">
+      <div className="relative" ref={ticketRef}>
         <div
           className="absolute top-0 left-0 right-0 h-4 z-10"
           style={{
@@ -195,15 +198,34 @@ export default function TicketConfirmation() {
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
         <Button
           variant="secondary"
-          onClick={() => {
-            toast('Función próximamente', {
-              icon: '📲',
-              style: {
-                background: '#1A1A1A',
-                color: '#F5F5F5',
-                border: '1px solid #333',
-              },
-            });
+          onClick={async () => {
+            if (!ticketRef.current) return;
+            try {
+              const canvas = await html2canvas(ticketRef.current, {
+                backgroundColor: '#0A0A0A',
+                scale: 2,
+                useCORS: true,
+              });
+              const link = document.createElement('a');
+              link.download = `CinePlus-${confirmationCode || 'ticket'}.png`;
+              link.href = canvas.toDataURL('image/png');
+              link.click();
+              toast.success('Boleto descargado', {
+                style: {
+                  background: '#1A1A1A',
+                  color: '#F5F5F5',
+                  border: '1px solid #333',
+                },
+              });
+            } catch {
+              toast.error('Error al descargar', {
+                style: {
+                  background: '#1A1A1A',
+                  color: '#F5F5F5',
+                  border: '1px solid #333',
+                },
+              });
+            }
           }}
         >
           <Download className="w-4 h-4 mr-2" />

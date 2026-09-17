@@ -6,9 +6,13 @@ import MovieCard from '../movies/MovieCard';
 import Skeleton from '../ui/Skeleton';
 
 export default function UpcomingSection() {
-  const { movies: raw, loading } = useMovies('upcoming');
-  const today = new Date().toISOString().split('T')[0];
-  const movies = useMemo(() => raw.filter((m) => m.release_date > today), [raw, today]);
+  const { movies: raw, loading: loadingUpcoming } = useMovies('upcoming');
+  const { movies: nowPlaying, loading: loadingNow } = useMovies('now_playing');
+  const loading = loadingUpcoming || loadingNow;
+  const movies = useMemo(() => {
+    const nowPlayingIds = new Set(nowPlaying.map((m) => m.id));
+    return raw.filter((m) => !nowPlayingIds.has(m.id));
+  }, [raw, nowPlaying]);
 
   return (
     <section>
