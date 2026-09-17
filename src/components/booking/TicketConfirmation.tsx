@@ -15,17 +15,20 @@ function useImageDataUrl(src: string | null): string | null {
 
   useEffect(() => {
     if (!src) return;
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      canvas.getContext('2d')!.drawImage(img, 0, 0);
-      setDataUrl(canvas.toDataURL('image/png'));
-    };
-    img.onerror = () => setDataUrl(null);
-    img.src = src;
+    let cancelled = false;
+    fetch(src)
+      .then((r) => r.blob())
+      .then((blob) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          if (!cancelled) setDataUrl(reader.result as string);
+        };
+        reader.readAsDataURL(blob);
+      })
+      .catch(() => {
+        if (!cancelled) setDataUrl(null);
+      });
+    return () => { cancelled = true; };
   }, [src]);
 
   return dataUrl;
