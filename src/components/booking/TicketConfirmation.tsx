@@ -4,6 +4,7 @@ import { Download, Home } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import html2canvas from 'html2canvas-pro';
+import { jsPDF } from 'jspdf';
 import Button from '../ui/Button';
 import Badge from '../ui/Badge';
 import { useBookingStore } from '../../stores/bookingStore';
@@ -233,10 +234,20 @@ export default function TicketConfirmation() {
                 useCORS: true,
                 allowTaint: true,
               });
-              const link = document.createElement('a');
-              link.download = `CinePlus-${confirmationCode || 'ticket'}.png`;
-              link.href = canvas.toDataURL('image/png');
-              link.click();
+              const imgData = canvas.toDataURL('image/png');
+              const imgWidth = canvas.width;
+              const imgHeight = canvas.height;
+              const pdfWidth = 100;
+              const pdfHeight = (imgHeight / imgWidth) * pdfWidth;
+              const pdf = new jsPDF({
+                orientation: pdfHeight > pdfWidth ? 'portrait' : 'landscape',
+                unit: 'mm',
+                format: [pdfWidth + 20, pdfHeight + 20],
+              });
+              pdf.setFillColor(10, 10, 10);
+              pdf.rect(0, 0, pdfWidth + 20, pdfHeight + 20, 'F');
+              pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth, pdfHeight);
+              pdf.save(`CinePlus-${confirmationCode || 'ticket'}.pdf`);
               toast.success('Boleto descargado', {
                 style: {
                   background: '#1A1A1A',
