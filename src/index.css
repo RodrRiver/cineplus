@@ -82,10 +82,24 @@ body {
 
 .swiper-button-next,
 .swiper-button-prev {
-  color: #C0C6CF !important;
+  color: #F5F5F5 !important;
+  background: rgba(10, 10, 10, 0.7) !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(192, 198, 207, 0.3) !important;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s !important;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: rgba(192, 198, 207, 0.2) !important;
+  border-color: rgba(192, 198, 207, 0.6) !important;
 }
 
 .swiper-button-next::after,
 .swiper-button-prev::after {
-  font-size: 18px !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
 }

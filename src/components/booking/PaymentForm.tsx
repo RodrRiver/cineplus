@@ -2,6 +2,8 @@ import { useState, type FormEvent } from 'react';
 import { CreditCard, Lock } from 'lucide-react';
 import Button from '../ui/Button';
 import { useBookingStore } from '../../stores/bookingStore';
+import { useTicketStore } from '../../stores/ticketStore';
+import { SNACKS } from '../../data/snacks';
 
 interface PaymentFormProps {
   onNext: () => void;
@@ -24,6 +26,12 @@ function formatExpiry(value: string): string {
 export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
   const generateConfirmation = useBookingStore((s) => s.generateConfirmation);
   const total = useBookingStore((s) => s.total);
+  const movie = useBookingStore((s) => s.movie);
+  const location = useBookingStore((s) => s.location);
+  const showtime = useBookingStore((s) => s.showtime);
+  const selectedSeats = useBookingStore((s) => s.selectedSeats);
+  const snacks = useBookingStore((s) => s.snacks);
+  const addTicket = useTicketStore((s) => s.addTicket);
 
   const [name, setName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
@@ -59,6 +67,29 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
     setProcessing(true);
     setTimeout(() => {
       generateConfirmation();
+      const code = useBookingStore.getState().confirmationCode!;
+      const snackEntries = Object.entries(snacks)
+        .map(([id, qty]) => {
+          const item = SNACKS.find((s) => s.id === id);
+          return item ? { name: item.name, qty } : null;
+        })
+        .filter(Boolean) as Array<{ name: string; qty: number }>;
+
+      addTicket({
+        confirmationCode: code,
+        movieTitle: movie?.title || '',
+        posterPath: movie?.poster_path || null,
+        locationName: location?.name || '',
+        date: showtime?.date || '',
+        time: showtime?.time || '',
+        format: showtime?.format || '',
+        screen: showtime?.screen || 0,
+        seats: selectedSeats.map((s) => `${s.row}-${s.number}`),
+        snacks: snackEntries,
+        total: total(),
+        purchasedAt: new Date().toISOString(),
+      });
+
       setProcessing(false);
       onNext();
     }, 1500);

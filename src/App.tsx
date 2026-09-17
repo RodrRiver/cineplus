@@ -11,6 +11,7 @@ const MovieDetailPage = lazy(() => import('./pages/MovieDetailPage'));
 const BookingPage = lazy(() => import('./pages/BookingPage'));
 const ConfirmationPage = lazy(() => import('./pages/ConfirmationPage'));
 const LocationsPage = lazy(() => import('./pages/LocationsPage'));
+const MyTicketsPage = lazy(() => import('./pages/MyTicketsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 function LoadingFallback() {
@@ -41,6 +42,7 @@ export default function App() {
             <Route path="movies" element={<MoviesPage />} />
             <Route path="coming-soon" element={<ComingSoonPage />} />
             <Route path="locations" element={<LocationsPage />} />
+            <Route path="my-tickets" element={<MyTicketsPage />} />
             <Route path="movie/:id" element={<MovieDetailPage />} />
             <Route path="movie/:id/book" element={<BookingPage />} />
             <Route path="booking/confirmation" element={<ConfirmationPage />} />

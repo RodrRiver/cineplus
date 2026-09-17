@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, X, Film } from 'lucide-react';
+import { Menu, X, Film, Ticket } from 'lucide-react';
+import { useTicketStore } from '../../stores/ticketStore';
 
 const navLinks = [
   { to: '/', label: 'Inicio' },
@@ -11,6 +12,7 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const ticketCount = useTicketStore((s) => s.tickets.length);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -62,6 +64,24 @@ export default function Navbar() {
               {link.label}
             </NavLink>
           ))}
+          <NavLink
+            to="/my-tickets"
+            className={({ isActive }) =>
+              `relative flex items-center gap-1.5 text-sm font-medium transition-colors py-1 ${
+                isActive
+                  ? 'text-gold-400'
+                  : 'text-text-secondary hover:text-text-primary'
+              }`
+            }
+          >
+            <Ticket size={16} />
+            Mis Boletos
+            {ticketCount > 0 && (
+              <span className="bg-gold-400 text-surface-900 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {ticketCount}
+              </span>
+            )}
+          </NavLink>
         </div>
 
         <button
@@ -119,6 +139,25 @@ export default function Navbar() {
                 {link.label}
               </NavLink>
             ))}
+            <NavLink
+              to="/my-tickets"
+              onClick={() => setMenuOpen(false)}
+              className={({ isActive }) =>
+                `px-4 py-3 rounded-lg text-base font-medium transition-colors flex items-center gap-2 ${
+                  isActive
+                    ? 'bg-gold-400/10 text-gold-400'
+                    : 'text-text-secondary hover:bg-surface-700 hover:text-text-primary'
+                }`
+              }
+            >
+              <Ticket size={18} />
+              Mis Boletos
+              {ticketCount > 0 && (
+                <span className="bg-gold-400 text-surface-900 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {ticketCount}
+                </span>
+              )}
+            </NavLink>
           </div>
         </div>
       </div>
