@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Check } from 'lucide-react';
+import { Check, Sparkles } from 'lucide-react';
 import Container from '../components/ui/Container';
 import LocationPicker from '../components/booking/LocationPicker';
 import ShowtimeGrid from '../components/booking/ShowtimeGrid';
@@ -34,9 +34,14 @@ export default function BookingPage() {
   const setMovie = useBookingStore((s) => s.setMovie);
   const nextStep = useBookingStore((s) => s.nextStep);
   const prevStep = useBookingStore((s) => s.prevStep);
+  const reset = useBookingStore((s) => s.reset);
 
   useEffect(() => {
     if (movieDetail) {
+      const stored = useBookingStore.getState();
+      if (stored.movie?.id !== movieDetail.id || stored.confirmationCode) {
+        reset();
+      }
       setMovie({
         id: movieDetail.id,
         title: movieDetail.title,
@@ -44,7 +49,7 @@ export default function BookingPage() {
         backdrop_path: movieDetail.backdrop_path,
       });
     }
-  }, [movieDetail, setMovie]);
+  }, [movieDetail, setMovie, reset]);
 
   if (loading) {
     return (
@@ -149,16 +154,26 @@ export default function BookingPage() {
 
           {currentStep === 5 && (
             <PaymentForm
-              onNext={() => {
-                nextStep();
-                navigate('/booking/confirmation', { replace: true });
-              }}
+              onNext={() => nextStep()}
               onBack={() => prevStep()}
             />
           )}
 
           {currentStep === 6 && (
-            <TicketConfirmation />
+            <div>
+              <div className="text-center mb-10">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gold-400/20 mb-4">
+                  <Sparkles className="w-8 h-8 text-gold-400" />
+                </div>
+                <h1 className="font-heading text-3xl md:text-4xl font-bold text-gold-400 mb-2">
+                  ¡Compra exitosa!
+                </h1>
+                <p className="text-text-secondary">
+                  Tu boleto ha sido generado. ¡Disfruta la película!
+                </p>
+              </div>
+              <TicketConfirmation />
+            </div>
           )}
         </div>
 
