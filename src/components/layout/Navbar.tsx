@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X, Film, Ticket } from 'lucide-react';
 import { useTicketStore } from '../../stores/ticketStore';
 
@@ -13,6 +13,11 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const ticketCount = useTicketStore((s) => s.tickets.length);
+  const location = useLocation();
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -86,7 +91,7 @@ export default function Navbar() {
 
         <button
           type="button"
-          className="md:hidden text-text-primary p-2"
+          className="md:hidden text-text-primary p-2 rounded-lg bg-surface-800/70 backdrop-blur-sm"
           onClick={() => setMenuOpen(true)}
           aria-label="Abrir menú"
         >
