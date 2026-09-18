@@ -41,7 +41,7 @@ export default function Navbar() {
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         scrolled
           ? 'bg-surface-800/95 backdrop-blur-md shadow-lg'
-          : 'bg-transparent'
+          : 'bg-surface-800/95 backdrop-blur-md md:bg-transparent md:backdrop-blur-none md:shadow-none'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
@@ -91,7 +91,7 @@ export default function Navbar() {
 
         <button
           type="button"
-          className="md:hidden text-text-primary p-2 rounded-lg bg-surface-800/70 backdrop-blur-sm"
+          className="md:hidden text-text-primary p-2"
           onClick={() => setMenuOpen(true)}
           aria-label="Abrir menú"
         >
